@@ -63,8 +63,8 @@ Pricing();
 //==According to research, the final area is divided by 350 to calculate how many gallons of paint are required.==
 console.log(`You did it. You will need in total ${Math.round(FinalArea / 350)} gallons of paint!`);
 console.log(`That will cost you ${Math.round((FinalArea/350) * PaintPriceVAT)} GBP.`);
-console.log(`Cost without VAT would be ${Math.round((FinalArea/350) * PaintPriceNOVAT)} GBP.`);
-console.log("The above price amounts to a number of 1L and 2.5L tins depending on how much paint you need.");
+//console.log(`Cost without VAT would be ${Math.round((FinalArea/350) * PaintPriceNOVAT)} GBP.`);
+console.log(`The above price amounts to ${Math.round((FinalArea / 350) / 3)} 2.5L Tins and ${Math.round((FinalArea / 350) / 2)} 1L Tins.`);
 
 
 //1 gallon = 4.5 litres, and paint cans come in tins of 1, 2.5 and 5 litres
@@ -83,12 +83,16 @@ function Pricing()
             PaintPriceVAT = Math.round(58.25 + (2 * 29.12));
             PaintPriceNOVAT = Math.round(48.54 + (2 * 24.27));
             break;
+        case 4:
+        case 5:
+            PaintPriceVAT = 65 + (2 * 31);
+            break;
     }
 }
 
 function SelectColour()
 {
-    if(PaintType = 1)
+    if(PaintType == 1)
     {
         console.log("You have chosen Latex-based paints.");
         console.log("L-Type Paint Colours: White - W / Pepper Red - PR / Banana Split - BS");
@@ -107,17 +111,38 @@ function SelectColour()
         {
             PaintColour = 2;
         }
-        else
+        else if(ColourSelection == "BS")
         {
             PaintColour = 3;
         }
 
     }
+
+    if(PaintType == 2)
+    {
+        console.log("You have chosen Oil-based paints.");
+        console.log("O-Type Paint Colours: White Marble - WM / Dark Olive Garden - DO");
+        const ColourSelection = prompt("Please enter the acronym for the colour you want. ");
+
+        if(ColourSelection != "WM" && ColourSelection != "DO")
+        {
+            console.log("Please use one of the acronyms provided. ");
+            SelectColour();
+        }
+        else if(ColourSelection == "WM")
+        {
+            PaintColour = 4;
+        }
+        else if(ColourSelection == "DO")
+        {
+            PaintColour = 5;
+        }
+    }
 }
 
 function SelectPaint()
 {
-    const Paint = prompt("Time to choose: L -> Latex-based paint / O -> Olive-based paint ");
+    const Paint = prompt("Time to choose: L -> Latex-based paint / O -> Oil-based paint ");
     
     if(Paint != "L" && Paint != "O")
     {
@@ -128,7 +153,7 @@ function SelectPaint()
     {
         PaintType = 1;
     }
-    else 
+    else if(Paint == "O")
     {
         PaintType = 2;
     }
