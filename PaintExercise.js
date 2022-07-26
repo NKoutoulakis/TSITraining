@@ -1,10 +1,4 @@
 //Gallon of Paint = 350 square feet
-//Average door = 20 square feet
-//Average window = 15 square feet
-
-//Wall area = Height by Width
-//Ceiling/Floor panel are basically 2 more walls
-
 /*
 ================================================================
 ==Import Prompt Function Module and define necessary variables==
@@ -12,9 +6,20 @@
 */
 
 const prompt = require('prompt-sync')();
+
+//Below variables can be refactored to 5 arrays (Walls/Windows/Doors/Misc/Paint)
 let TotalHeight = 0;
 let TotalWidth = 0;
 let TotalArea = 0;
+let WindowHeight = 0;
+let WindowWidth = 0;
+let WindowArea = 0;
+let DoorHeight = 0;
+let DoorWidth = 0;
+let DoorArea = 0;
+let AdjustmentHeight = 0;
+let AdjustmentWidth = 0;
+let AdjustmentArea = 0;
 let FinalArea = 0;
 let PaintPriceVAT = 0;
 let PaintPriceNOVAT = 0;
@@ -52,12 +57,12 @@ console.log("They can hold up for a long period of time and perform well in bedr
 console.log("Oil-based paints are more expensive and sometimes prone to chipping but ideal for kitchens and bathrooms.");
 console.log("They hold excellently against water damage and moisture and can be a solid investment.")
 
-SelectPaint();
+SelectPaint();    //Allows the user to select their paint type.
 
 console.log("Time to select your colour.");
 
-SelectColour();
-Pricing();
+SelectColour();        //Allows the user to select from available colours.
+Pricing();          //Calculates prices depending on paint type and colour.
 
 
 //==According to research, the final area is divided by 350 to calculate how many gallons of paint are required.==
@@ -211,21 +216,66 @@ function CalculateWindows()
 {
 const Windows = parseInt(prompt("How many windows are in the painted room? "));
 
+if (Windows > 0)       //If there are windows, proceed to calculate their area.
+    {
+    GetWindowHeight();
+    GetWindowWidth();
+
+    WindowArea = WindowHeight * WindowWidth;
+    }
+
 if (isNaN(Windows))            //Error prevention in case of erroneous input.
 {                              //If input is wrong, user has to retry.
     console.log("Please enter a number. ")
     CalculateWindows();
 }
 else
-{
-    //According to research, average window is 15 square feet.    
-FinalArea = TotalArea - (Windows * 15);
+{  
+FinalArea = TotalArea - (Windows * WindowArea); //Update FinalArea based on windows.
 }
+}
+
+function GetWindowHeight()
+{
+    const a = parseInt(prompt("Enter your window's height (in feet): "));
+    
+    if (isNaN(a))    //Error prevention in case of erroneous input.
+    {                //If input is wrong, user has to retry.
+        console.log("Please enter a number. ");
+        GetWindowHeight();
+    }
+    else
+    {
+    WindowHeight += a;
+    }
+}
+
+function GetWindowWidth()
+{
+    const b = parseInt(prompt("Enter your window's width (in feet): "));
+    
+    if (isNaN(b))    //Error prevention in case of erroneous input.
+    {                //If input is wrong, user has to retry.
+        console.log("Please enter a number. ");
+        GetWindowWidth();
+    }
+    else
+    {
+    WindowWidth += b;
+    }
 }
 
 function CalculateDoors()
 {
     const Doors = parseInt(prompt("How many doors in the room will be painted? "));
+
+    if (Doors > 0)            //If there are doors, proceed to calculate their area.
+    {
+        GetDoorHeight();
+        GetDoorWidth();
+    
+        DoorArea = DoorHeight * DoorWidth;
+    }
     
     if (isNaN(Doors))          //Error prevention in case of erroneous input.
     {                          //If input is wrong, user has to retry.
@@ -234,15 +284,52 @@ function CalculateDoors()
     }
     else 
     {
-        //According to research, average door is 20 square feet.
-    FinalArea -= (Doors * 20);
+    FinalArea -= (Doors * DoorArea); //Update FinalArea based on doors.
+    }
+}
+
+function GetDoorHeight()
+{
+    const a = parseInt(prompt("Enter your door's height (in feet): "));
+    
+    if (isNaN(a))    //Error prevention in case of erroneous input.
+    {                //If input is wrong, user has to retry.
+        console.log("Please enter a number. ");
+        GetDoorHeight();
+    }
+    else
+    {
+    DoorHeight += a;
+    }
+}
+
+function GetDoorWidth()
+{
+    const b = parseInt(prompt("Enter your door's width (in feet): "));
+    
+    if (isNaN(b))    //Error prevention in case of erroneous input.
+    {                //If input is wrong, user has to retry.
+        console.log("Please enter a number. ");
+        GetDoorWidth();
+    }
+    else
+    {
+    DoorWidth += b;
     }
 }
 
 function CalculateAdjustments()
 {
-    const Adjustment = parseInt(prompt("Please list the total area (in square feet) of sockets and other areas you won't paint. "));
-    
+    const Adjustment = parseInt(prompt("How many areas like plug sockets won't need paint? "));
+   
+    if (Adjustment > 0)      //If there are areas like plug sockets, proceed to calculate their area.
+    {
+    GetAdjustmentHeight();
+    GetAdjustmentWidth();
+
+    AdjustmentArea = AdjustmentHeight * AdjustmentWidth;
+    }
+
     if(isNaN(Adjustment))     //Error prevention in case of erroneous input.
     {                         //If input is wrong, user has to retry.
         console.log("Please enter a number.")
@@ -250,6 +337,36 @@ function CalculateAdjustments()
     }
     else
     {
-    FinalArea -= Adjustment;
+    FinalArea -= (Adjustment * AdjustmentArea); //Update FinalArea based on adjustments.
+    }
+}
+
+function GetAdjustmentHeight()
+{
+    const a = parseInt(prompt("Enter your small area's height (in feet): "));
+    
+    if (isNaN(a))    //Error prevention in case of erroneous input.
+    {                //If input is wrong, user has to retry.
+        console.log("Please enter a number. ");
+        GetAdjustmentHeight();
+    }
+    else
+    {
+    AdjustmentHeight += a;
+    }
+}
+
+function GetAdjustmentWidth()
+{
+    const b = parseInt(prompt("Enter your small area's width (in feet): "));
+    
+    if (isNaN(b))    //Error prevention in case of erroneous input.
+    {                //If input is wrong, user has to retry.
+        console.log("Please enter a number. ");
+        GetAdjustmentWidth();
+    }
+    else
+    {
+    AdjustmentWidth += b;
     }
 }
