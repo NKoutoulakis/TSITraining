@@ -62,6 +62,9 @@ Pricing();
 
 //==According to research, the final area is divided by 350 to calculate how many gallons of paint are required.==
 console.log(`You did it. You will need in total ${Math.round(FinalArea / 350)} gallons of paint!`);
+console.log(`That will cost you ${Math.round((FinalArea/350) * PaintPriceVAT)} GBP.`);
+console.log(`Cost without VAT would be ${Math.round((FinalArea/350) * PaintPriceNOVAT)} GBP.`);
+console.log("The above price amounts to a number of 1L and 2.5L tins depending on how much paint you need.");
 
 
 //1 gallon = 4.5 litres, and paint cans come in tins of 1, 2.5 and 5 litres
