@@ -43,6 +43,8 @@ CalculateWindows();
 CalculateDoors();
 CalculateAdjustments();
 
+//The above factions can be refactored with statements into one function.
+
 /*
 ======================================================================
 ==============Intro to the paint selection process====================
@@ -68,6 +70,7 @@ Pricing();          //Calculates prices depending on paint type and colour.
 //==According to research, the final area is divided by 350 to calculate how many gallons of paint are required.==
 console.log(`You did it. You will need in total ${Math.round(FinalArea / 350)} gallons of paint!`);
 console.log(`That will cost you ${Math.round((FinalArea/350) * PaintPriceVAT)} GBP.`);
+//Not including price without VAT anymore as no reliable data on it could be found.
 //console.log(`Cost without VAT would be ${Math.round((FinalArea/350) * PaintPriceNOVAT)} GBP.`);
 console.log(`The above price amounts to ${Math.round((FinalArea / 350) / 3)} 2.5L Tins and ${Math.round((FinalArea / 350) / 2)} 1L Tins.`);
 
