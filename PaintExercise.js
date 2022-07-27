@@ -230,7 +230,7 @@ if (Windows > 0)       //If there are windows, proceed to calculate their area.
 
 if (isNaN(Windows))            //Error prevention in case of erroneous input.
 {                              //If input is wrong, user has to retry.
-    console.log("Please enter a number. ")
+    console.log("Please enter a number. ");
     CalculateWindows();
 }
 else
@@ -283,7 +283,7 @@ function CalculateDoors()
     
     if (isNaN(Doors))          //Error prevention in case of erroneous input.
     {                          //If input is wrong, user has to retry.
-        console.log("Please enter a number. ")
+        console.log("Please enter a number. ");
         CalculateDoors();
     }
     else 
@@ -336,7 +336,7 @@ function CalculateAdjustments()
 
     if(isNaN(Adjustment))     //Error prevention in case of erroneous input.
     {                         //If input is wrong, user has to retry.
-        console.log("Please enter a number.")
+        console.log("Please enter a number. ");
         CalculateAdjustments();
     }
     else
