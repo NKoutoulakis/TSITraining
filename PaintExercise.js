@@ -43,7 +43,8 @@ CalculateWindows();
 CalculateDoors();
 CalculateAdjustments();
 
-//The above factions can be refactored with statements into one function.
+//The above factions can be refactored with statements into one function
+//and to account for negative input.
 
 /*
 ======================================================================
