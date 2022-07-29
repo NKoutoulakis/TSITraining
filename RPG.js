@@ -7,12 +7,14 @@ So far this is more of a dynamic character generator using JavaScript.
 //Importing the promp module so player can input data.
 const prompt = require('prompt-sync')();
 
+let GameStart = false;
 let finalAbilityScores = []; //Array for finalising each character's ability scores.
 const characterList = []; //Array of all character objects.
+const enemyList = [`Human`, `Goblin`, `Skeleton`]; //Array of enemy appearances.
 
 class PlayerCharacter 
 {
-    constructor(characterName, strength, dexterity, intelligence, level)
+    constructor(characterName, strength, dexterity, intelligence, level, weapon)
     {
         //The constructor for the player character assigns their name, stats and level.
         this.characterName = characterName;
@@ -27,7 +29,27 @@ class PlayerCharacter
         this.intModifier = Math.floor((intelligence - 10) / 2);
 
         this.Level = level;
-        this.HP = (10 + (level * this.strModifier));
+        this.HP = (10 + (level * this.strModifier)); //HP = Hit Points - The player's endurance.
+        this.AC = (10 + (level * this.dexModifier)); //AC = Armor Class - The player's defense.
+        this.Will = (10 + (level * this.intModifier)); //Will = WIllpower - The player's magic defense.
+
+        switch(weapon)  //Presents the player's starting weapon.
+        {
+            case 1:
+                this.weapon = "Longsword";
+                this.weaponType = 1;
+                break;
+            case 2:
+                this.weapon = "Bow";
+                this.weaponType = 2;
+                break;
+            case 3:
+                this.weapon = "Magic Missile Wand";
+                this.weaponType = 3;
+                break;
+            default:
+                this.weapon = "Legendary Glitch Staff of Power";
+        }
         //Will need a level up function to update level and stats.
     }
 
@@ -37,33 +59,312 @@ class PlayerCharacter
         let diceRoll = Math.floor(Math.random() * 20) + 1;
         let attackRoll = diceRoll + modifier;
 
-        //The dice roll and attack rolls are separated for testing purposes.
-        //The design is that each weapon (sword, bow, magic staff) will reference the modifier it uses.
-        console.log(`${diceRoll}`);
-        console.log(`${attackRoll}`);
+        //The design is that each weapon (sword, bow, magic implement) will reference the modifier it uses.
+        //console.log(diceRoll);
+        //console.log(attackRoll);
+
+        return attackRoll;
     }
 }
 
-CreateCharacter(); //Create character function will be moved to a menu prompt.
+Gameplay();
 
-//Console logs for testing to make sure everything works properly.
-console.log(`\nName: ${characterList[characterList.length - 1].characterName}`);
-console.log(`Strength Score: ${characterList[characterList.length - 1].strength} (${characterList[characterList.length - 1].strModifier})`);
-console.log(`Dexterity Score: ${characterList[characterList.length - 1].dexterity} (${characterList[characterList.length - 1].dexModifier})`);
-console.log(`Intelligence Score: ${characterList[characterList.length - 1].intelligence} (${characterList[characterList.length - 1].intModifier})`);
-console.log(`\nLevel: ${characterList[characterList.length - 1].Level}`);
-console.log(`HP: ${characterList[characterList.length - 1].HP}`);
+function Gameplay()
+{
+    if (!GameStart)
+    {
+    console.log("Welcome to the game! \n1 -> Create Character \n2 -> View Character \n3 -> Test Fight! \n4 -> Save Progress ");
+    GameStart = true;
+    }
+    else
+    {
+        console.log("\nYou can choose another main menu prompt. ");
+    }
+    const playerChoice = parseInt(prompt(""));
+    
+    switch(playerChoice)
+    {
+        case 1:
+            CreateCharacter();
+            Gameplay();
+            break;
+        case 2:
+            ViewCharacer();
+            Gameplay();
+            break;
+        case 3:
+            TestFight();
+            Gameplay();
+            break;
+        case 4:
+            console.log("Come back later for this. ");
+            Gameplay();
+            break;
+        default:
+            console.log("Please use one of the prompts provided. ");
+            Gameplay();
+    }
 
-/*
-console.log(`\nYou attack with a sword! `);
-characterList[characterList.length - 1].attackRoll(characterList[characterList.length - 1].strModifier);
+}
 
-console.log(`\nYou shoot with your bow! `);
-characterList[characterList.length - 1].attackRoll(characterList[characterList.length - 1].dexModifier);
+function TestFight()
+{
+    if(characterList.length != 0)
+    {
+    let FeintFlag = false;
+    let BattleFlag = true;
 
-console.log(`\nYou conjure a fire bolt! `);
-characterList[characterList.length - 1].attackRoll(characterList[characterList.length - 1].intModifier);
-*/
+    let PlayerHealth = UpdateCharacter().HP;
+    let currentEnemy = enemyList[Math.floor(Math.random() * 3)];
+    let currentEnemyType = Math.floor(Math.random() * 3);
+    //let currentEnemyAC = UpdateCharacter().Level + 7;    //Enemies with different defenses are
+    //let currentEnemyWill = UpdateCharacter().Level + 7; //beyond the scope of this draft.
+    let currentEnemyHP = UpdateCharacter().Level * 15;
+
+    console.log(`\nYou are fighting a ${currentEnemy} Marauder! `);
+
+    do 
+    {
+        console.log(`\nEnemy HP: ${currentEnemyHP}`);
+        console.log("\nWhat do you do? ");
+        console.log("1-> Attack with weapon");
+        console.log("2-> Feint (-5 to enemy's next attack and defense until you attack (doesn't stack))");
+        console.log("3-> Run away");
+
+        $currentRoll = 0;
+        $currentDamage = 0;
+
+        let fightChoice = parseInt(prompt(""));
+
+        switch(fightChoice)
+        {
+            case 1:
+                console.log(`You attack with your ${UpdateCharacter().weapon}! `);
+
+                console.log(`\nAttack Roll: `);
+                $currentRoll += UpdateCharacter().attackRoll(weaponTable());
+                console.log($currentRoll);
+
+                if ($currentRoll >= 8 || ($currentRoll >= 3 && FeintFlag))
+                {
+                    console.log(`\nIt's a hit! Damage roll: `)
+                    $currentDamage += damageTable();
+                    console.log($currentDamage);
+                    currentEnemyHP -= $currentDamage;
+
+                    FeintFlag = false;
+
+                    if(currentEnemyHP <= 0)
+                    {
+                        console.log(`The ${currentEnemy} Marauder falls to the ground defeated. `);
+                        BattleFlag = false;
+                    }
+                }
+                else
+                {
+                    console.log(`\nThe ${currentEnemy} Marauder dodges the attack...`)
+                }
+                break;
+            case 2:
+                console.log("You wait for your enemy to overextend...")
+                FeintFlag = true;
+                break;
+            case 3:
+                console.log("There is nowhere to run...");
+                break;
+            default:
+                console.log("You are paralysed by fear! ");
+        }
+
+        $currentRoll = 0;
+        $currentDamage = 0;
+
+        $currentRoll = enemyAttackRoll();
+        $currentDamage = enemyDamageRoll();
+
+        if (BattleFlag)
+        {
+        switch(currentEnemyType)
+        {
+            case 0:
+                console.log(`The ${currentEnemy} Marauder lunges forward with a rusty cleaver! `);
+                console.log(`\nAttack Roll: `);
+                console.log($currentRoll);
+
+                if ($currentRoll <= UpdateCharacter().AC || (($currentRoll - 5) <= UpdateCharacter().AC && FeintFlag))
+                {
+                    console.log(`\nYou evade the attack! `);
+                }
+                else
+                {
+                    console.log(`\nYou are hit! Damage Roll: `);
+                    console.log($currentDamage);
+
+                    PlayerHealth -= $currentDamage;
+                    
+                    if(PlayerHealth <= 0)
+                    {
+                        console.log("You fall to the ground, defeated...");
+                        BattleFlag = false;
+                    }
+                    else
+                    {
+                    console.log(`\nYou have ${PlayerHealth} HP remaining.`)
+                    }
+                }
+                break;
+            case 1:
+                console.log(`The ${currentEnemy} Marauder flings a throwing axe at you! `);
+                console.log(`\nAttack Roll: `);
+                console.log($currentRoll);
+
+                if ($currentRoll <= UpdateCharacter().AC || (($currentRoll - 5) <= UpdateCharacter().AC && FeintFlag))
+                {
+                    console.log(`\nYou duck underneath the axe! `);
+                }
+                else
+                {
+                    console.log(`\nYou are hit! Damage Roll: `);
+                    console.log($currentDamage);
+
+                    PlayerHealth -= $currentDamage;
+
+                    if(PlayerHealth <= 0)
+                    {
+                        console.log("You fall to the ground, defeated...");
+                        BattleFlag = false;
+                    }
+                    else
+                    {
+                    console.log(`\nYou have ${PlayerHealth} HP remaining.`)
+                    }
+                }
+                break;
+            case 2:
+                console.log(`The ${currentEnemy} Marauder conjures a ball of acid above you! `);
+                console.log(`\nAttack Roll: `);
+                console.log($currentRoll);
+
+                if ($currentRoll <= UpdateCharacter().Will || (($currentRoll - 5) <= UpdateCharacter().Will && FeintFlag))
+                {
+                    console.log(`\nThe spell fizzles under your superior Willpower! `);
+                }
+                else
+                {
+                    console.log(`\nYou are hit! Damage Roll: `);
+                    console.log($currentDamage);
+
+                    PlayerHealth -= $currentDamage;
+
+                    if(PlayerHealth <= 0)
+                    {
+                        console.log("You fall to the ground, defeated...");
+                        BattleFlag = false;
+                    }
+                    else
+                    {
+                    console.log(`\nYou have ${PlayerHealth} HP remaining.`)
+                    }
+                }
+                break;
+            }
+        }
+    }
+    while(BattleFlag)
+    }
+    else
+    {
+        console.log("You need to create a character first! ");
+    }
+}
+
+function enemyAttackRoll()
+{
+    return Math.floor(Math.random() * 20) + UpdateCharacter().Level;
+}
+
+function enemyDamageRoll()
+{
+    return Math.floor(Math.random() * 6) + UpdateCharacter().Level;
+}
+
+function UpdateCharacter()
+{
+    //Function to retrieve the active character and their weapon.
+    //Currently it retrieves the most recently created character.
+    return characterList[characterList.length - 1];
+}
+
+function weaponTable()
+{
+    let modifier = 0;
+
+    switch(UpdateCharacter().weaponType)
+    {
+        //Calculate modifier based on character's weapon.
+        case 1:
+            modifier += UpdateCharacter().strModifier;
+            break;
+        case 2:
+            modifier += UpdateCharacter().dexModifier;
+            break;
+        case 3:
+            modifier += UpdateCharacter().intModifier;
+            break;
+        default:
+            modifier += Math.floor(Math.random() * 20) + 1;
+    }
+
+    return modifier;
+}
+
+function damageTable()
+{
+    let damage = 0;
+    //Calculate damage based on character's weapon.
+    switch(UpdateCharacter().weaponType)
+    {
+        case 1:
+        case 2:
+            damage += (Math.floor(Math.random() * 8) + 1) + weaponTable();
+            break;
+        case 3:
+            damage += (Math.floor(Math.random() * 4) + 2) + weaponTable();
+            break;
+        default:
+            damage += Math.floor(Math.random() * 20) + 1;
+    }
+
+    return damage;
+}
+
+function ViewCharacer()
+{
+    if(characterList.length != 0)
+    {
+        //Console logs for testing to make sure everything works properly.
+        console.log(`\nName: ${UpdateCharacter().characterName}`);
+        console.log(`Strength Score: ${UpdateCharacter().strength} (${UpdateCharacter().strModifier})`);
+        console.log(`Dexterity Score: ${UpdateCharacter().dexterity} (${UpdateCharacter().dexModifier})`);
+        console.log(`Intelligence Score: ${UpdateCharacter().intelligence} (${UpdateCharacter().intModifier})`);
+        console.log(`\nLevel: ${UpdateCharacter().Level}`);
+        console.log(`HP: ${UpdateCharacter().HP}`);
+        console.log(`AC: ${UpdateCharacter().AC}`);
+        console.log(`Willpower: ${UpdateCharacter().Will}`);
+
+        console.log(`\nYour starting gear: ${UpdateCharacter().weapon} `);
+        /*
+        console.log(`\nTest Attack Roll: `);
+        console.log(UpdateCharacter().attackRoll(weaponTable()));
+        console.log(`\nTest Damage Roll: `);
+        console.log(damageTable());
+        */
+    }
+    else
+    {
+        console.log("You need to create a character first! ");
+    }
+}
 
 function CreateCharacter()
 {
@@ -88,13 +389,28 @@ function CreateCharacter()
     {
         rollAbilityScores();
         //If they reroll, a new set of ability scores are generated.
+
+    console.log(`\nFinal ability scores: `);
+
+    console.log(`Strength Score: ${finalAbilityScores[0]}`);
+    console.log(`Dexterity Score: ${finalAbilityScores[1]}`);
+    console.log(`Intelligence Score: ${finalAbilityScores[2]}`);
     }
+
+    console.log(`\nChoose your starting weapon: `);
+
+    console.log(`1 -> Longsword: Strength-based / Damage: 1d8 `);
+    console.log(`2 -> Bow: Dexterity-based / Damage: 1d8 `);
+    console.log(`3 -> Magic Missile Wand: Intelligence-based / Damage: 1d4+1 `);
+
+    let weaponChoice = parseInt(prompt(""));
 
     characterList.push(new PlayerCharacter(name,
         finalAbilityScores[0],
         finalAbilityScores[1],
         finalAbilityScores[2],
-        1));
+        1,
+        weaponChoice));
         //The finalised character is dynamically logged as a new object.
         //A list would be better for functionality but this is vanilla JS.
         //Each newly created character arrives at the end of the array.
@@ -103,6 +419,7 @@ function CreateCharacter()
         can generate the number that will indicate the character's position
         in the array, for the character to be loaded and used.
         */
+    console.log(`\n${name} successfully created! `);
 }
 
 function rollAbilityScores()
