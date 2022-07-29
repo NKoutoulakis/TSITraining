@@ -111,10 +111,13 @@ function TestFight()
 {
     if(characterList.length != 0)
     {
-    let FeintFlag = false;
+    let FeintFlag = false; //Set flags to control the flow of the fight.
     let BattleFlag = true;
 
+    //Retrieve variables from the current active player object.
     let PlayerHealth = UpdateCharacter().HP;
+
+    //Generate enemy stats, can be randomised.
     let currentEnemy = enemyList[Math.floor(Math.random() * 3)];
     let currentEnemyType = Math.floor(Math.random() * 3);
     //let currentEnemyAC = UpdateCharacter().Level + 7;    //Enemies with different defenses are
@@ -123,7 +126,7 @@ function TestFight()
 
     console.log(`\nYou are fighting a ${currentEnemy} Marauder! `);
 
-    do 
+    do    //The fight loop repeats until the player or the enemy lose.
     {
         console.log(`\nEnemy HP: ${currentEnemyHP}`);
         console.log("\nWhat do you do? ");
@@ -144,6 +147,8 @@ function TestFight()
                 console.log(`\nAttack Roll: `);
                 $currentRoll += UpdateCharacter().attackRoll(weaponTable());
                 console.log($currentRoll);
+                //Using pre-existing functions, we use the player's stats for attacks.
+                //Feint functionality is applied to the defense comparisons.
 
                 if ($currentRoll >= 8 || ($currentRoll >= 3 && FeintFlag))
                 {
@@ -158,6 +163,7 @@ function TestFight()
                     {
                         console.log(`The ${currentEnemy} Marauder falls to the ground defeated. `);
                         BattleFlag = false;
+                        //Battle is over when the enemy is defeated.
                     }
                 }
                 else
@@ -168,6 +174,7 @@ function TestFight()
             case 2:
                 console.log("You wait for your enemy to overextend...")
                 FeintFlag = true;
+                //Feint logic is activated.
                 break;
             case 3:
                 console.log("There is nowhere to run...");
@@ -182,6 +189,9 @@ function TestFight()
         $currentRoll = enemyAttackRoll();
         $currentDamage = enemyDamageRoll();
 
+        //Values are reset and re-calculated for the enemy's turn.
+        //If the enemy is alive, they take their turn.
+
         if (BattleFlag)
         {
         switch(currentEnemyType)
@@ -191,6 +201,7 @@ function TestFight()
                 console.log(`\nAttack Roll: `);
                 console.log($currentRoll);
 
+                //Player defenses are compared with the enemy's rolls.
                 if ($currentRoll <= UpdateCharacter().AC || (($currentRoll - 5) <= UpdateCharacter().AC && FeintFlag))
                 {
                     console.log(`\nYou evade the attack! `);
@@ -201,11 +212,13 @@ function TestFight()
                     console.log($currentDamage);
 
                     PlayerHealth -= $currentDamage;
+                    //Player is hurt with the enemy's rolled damage if the enemy lands a hit.
                     
                     if(PlayerHealth <= 0)
                     {
                         console.log("You fall to the ground, defeated...");
                         BattleFlag = false;
+                        //Battle is over when the player is defeated.
                     }
                     else
                     {
@@ -218,6 +231,7 @@ function TestFight()
                 console.log(`\nAttack Roll: `);
                 console.log($currentRoll);
 
+                //Player defenses are compared with the enemy's rolls.
                 if ($currentRoll <= UpdateCharacter().AC || (($currentRoll - 5) <= UpdateCharacter().AC && FeintFlag))
                 {
                     console.log(`\nYou duck underneath the axe! `);
@@ -228,11 +242,13 @@ function TestFight()
                     console.log($currentDamage);
 
                     PlayerHealth -= $currentDamage;
+                    //Player is hurt with the enemy's rolled damage if the enemy lands a hit.
 
                     if(PlayerHealth <= 0)
                     {
                         console.log("You fall to the ground, defeated...");
                         BattleFlag = false;
+                        //Battle is over when the player is defeated.
                     }
                     else
                     {
@@ -245,6 +261,7 @@ function TestFight()
                 console.log(`\nAttack Roll: `);
                 console.log($currentRoll);
 
+                //Player defenses are compared with the enemy's rolls.
                 if ($currentRoll <= UpdateCharacter().Will || (($currentRoll - 5) <= UpdateCharacter().Will && FeintFlag))
                 {
                     console.log(`\nThe spell fizzles under your superior Willpower! `);
@@ -255,11 +272,13 @@ function TestFight()
                     console.log($currentDamage);
 
                     PlayerHealth -= $currentDamage;
+                    //Player is hurt with the enemy's rolled damage if the enemy lands a hit.
 
                     if(PlayerHealth <= 0)
                     {
                         console.log("You fall to the ground, defeated...");
                         BattleFlag = false;
+                        //Battle is over when the player is defeated.
                     }
                     else
                     {
@@ -281,11 +300,13 @@ function TestFight()
 function enemyAttackRoll()
 {
     return Math.floor(Math.random() * 20) + UpdateCharacter().Level;
+    //Enemy roll gives value equal to 1d20 + the player's level (scaling difficulty).
 }
 
 function enemyDamageRoll()
 {
     return Math.floor(Math.random() * 6) + UpdateCharacter().Level;
+    //Enemy roll gives value equal to 1d6 + the player's level (scaling difficulty).
 }
 
 function UpdateCharacter()
