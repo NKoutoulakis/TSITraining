@@ -89,7 +89,7 @@ function Gameplay()
             Gameplay();
             break;
         case 2:
-            ViewCharacer();
+            ViewCharacter();
             Gameplay();
             break;
         case 3:
@@ -338,7 +338,7 @@ function damageTable()
     return damage;
 }
 
-function ViewCharacer()
+function ViewCharacter()
 {
     if(characterList.length != 0)
     {
